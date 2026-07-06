@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NeoByte — Vibe Coding, Reimagined</title>
+<meta name="description" content="NeoByte is coming soon. Vibe coding, reimagined — build faster, ship weirder, dream in code." />
+<meta name="theme-color" content="#05060a" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="NeoByte — Vibe Coding, Reimagined" />
+<meta property="og:description" content="Something new is compiling. Vibe coding, reimagined." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://neo-byte.co.uk" />
+
+<style>
+  :root {
+    --bg:        #05060a;
+    --bg-soft:   #0a0d16;
+    --cyan:      #22e0ff;
+    --violet:    #a855ff;
+    --pink:      #ff4ecd;
+    --ink:       #e7ecff;
+    --muted:     #7c86a8;
+    --line:      rgba(120,140,220,0.14);
+    --glow:      0 0 40px rgba(34,224,255,0.35);
+    --font:      'Space Grotesk', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono:      'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html, body { height:100%; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--ink);
+    overflow-x: hidden;
+    min-height: 100vh;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- animated background layers ---------- */
+  #stars {
+    position: fixed; inset: 0; z-index: 0;
+    display: block;
+  }
+
+  .grid {
+    position: fixed; inset: -50% 0 0 0; z-index: 1;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 46px 46px;
+    transform: perspective(420px) rotateX(58deg);
+    transform-origin: top center;
+    mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 55%, transparent 78%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 55%, transparent 78%);
+    animation: grid-scroll 8s linear infinite;
+    opacity: 0.55;
+  }
+  @keyframes grid-scroll {
+    from { background-position: 0 0, 0 0; }
+    to   { background-position: 0 46px, 0 46px; }
+  }
+
+  .aurora {
+    position: fixed; z-index: 1; border-radius: 50%;
+    filter: blur(90px); opacity: 0.5; pointer-events: none;
+  }
+  .aurora.a { top:-12%; left:-8%; width:46vw; height:46vw;
+    background: radial-gradient(circle, var(--violet), transparent 62%);
+    animation: drift 16s ease-in-out infinite alternate; }
+  .aurora.b { bottom:-18%; right:-10%; width:52vw; height:52vw;
+    background: radial-gradient(circle, var(--cyan), transparent 62%);
+    animation: drift 20s ease-in-out infinite alternate-reverse; }
+  .aurora.c { top:30%; right:20%; width:30vw; height:30vw;
+    background: radial-gradient(circle, var(--pink), transparent 65%);
+    opacity:0.3; animation: drift 24s ease-in-out infinite alternate; }
+  @keyframes drift {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(6vw,4vh) scale(1.15); }
+  }
+
+  .scanlines {
+    position: fixed; inset:0; z-index: 2; pointer-events:none;
+    background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.16) 3px);
+    mix-blend-mode: overlay; opacity:0.4;
+  }
+
+  /* ---------- content ---------- */
+  .wrap {
+    position: relative; z-index: 5;
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 40px 22px 90px;
+  }
+
+  .badge {
+    display:inline-flex; align-items:center; gap:9px;
+    font-family: var(--mono); font-size: 12px; letter-spacing:0.18em;
+    text-transform: uppercase; color: var(--cyan);
+    border:1px solid rgba(34,224,255,0.35);
+    padding: 8px 16px; border-radius: 999px;
+    background: rgba(34,224,255,0.05);
+    backdrop-filter: blur(6px);
+    box-shadow: var(--glow);
+    animation: fade-up 0.9s both;
+  }
+  .dot {
+    width:8px; height:8px; border-radius:50%; background: var(--cyan);
+    box-shadow:0 0 10px var(--cyan);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.35;transform:scale(.7);} }
+
+  /* logo mark (placeholder — no logo yet) */
+  .mark {
+    margin: 34px auto 8px;
+    width: 92px; height: 92px;
+    animation: fade-up 0.9s 0.05s both, floaty 6s ease-in-out infinite;
+  }
+  @keyframes floaty { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-9px);} }
+
+  h1 {
+    font-size: clamp(3rem, 13vw, 8.5rem);
+    font-weight: 700; line-height: 0.92; letter-spacing: -0.03em;
+    animation: fade-up 0.9s 0.1s both;
+    position: relative;
+  }
+  .neo { color: var(--ink); }
+  .byte {
+    position: relative;
+    background: linear-gradient(100deg, var(--cyan), var(--violet) 55%, var(--pink));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  /* ---- Black Mirror glitch ---- */
+  .glitch { position: relative; display:inline-block;
+    animation: glitch-skew 5s infinite steps(6, end); }
+  .glitch::before, .glitch::after {
+    content: attr(data-text); position:absolute; top:0; left:0;
+    width:100%; height:100%; background: var(--bg);
+    overflow: hidden;
+  }
+  /* red/pink channel — hidden until a burst fires */
+  .glitch::before {
+    color: var(--pink);
+    text-shadow: -2px 0 var(--pink);
+    clip-path: inset(50% 0 50% 0);
+    animation: glitch-anim-1 9s infinite steps(2, end);
+  }
+  /* cyan channel — hidden until a burst fires */
+  .glitch::after {
+    color: var(--cyan);
+    text-shadow: -2px 0 var(--cyan), 2px 2px var(--violet);
+    clip-path: inset(50% 0 50% 0);
+    animation: glitch-anim-2 9s infinite steps(2, end);
+  }
+
+  /* Clean ~93% of the time; two short torn-scan bursts per 9s cycle. */
+  @keyframes glitch-anim-1 {
+    0%, 40%, 55%, 88%, 100% { clip-path: inset(50% 0 50% 0); transform: translate(0); }
+    /* burst A */
+    41% { clip-path: inset(16% 0 68% 0); transform: translate(-4px,-1px); }
+    43% { clip-path: inset(74% 0 8%  0); transform: translate(3px, 1px); }
+    45% { clip-path: inset(34% 0 52% 0); transform: translate(-3px, 0); }
+    47% { clip-path: inset(88% 0 3%  0); transform: translate(4px,-2px); }
+    49% { clip-path: inset(50% 0 50% 0); transform: translate(0); }
+    /* burst B */
+    89% { clip-path: inset(6%  0 84% 0); transform: translate(3px, 1px); }
+    91% { clip-path: inset(58% 0 26% 0); transform: translate(-4px, 0); }
+    93% { clip-path: inset(28% 0 60% 0); transform: translate(2px,-1px); }
+  }
+  @keyframes glitch-anim-2 {
+    0%, 40%, 55%, 88%, 100% { clip-path: inset(50% 0 50% 0); transform: translate(0); }
+    /* burst A */
+    42% { clip-path: inset(64% 0 20% 0); transform: translate(4px, 1px); }
+    44% { clip-path: inset(20% 0 70% 0); transform: translate(-3px, 0); }
+    46% { clip-path: inset(80% 0 6%  0); transform: translate(3px,-1px); }
+    48% { clip-path: inset(50% 0 50% 0); transform: translate(0); }
+    /* burst B */
+    90% { clip-path: inset(40% 0 44% 0); transform: translate(-3px, 1px); }
+    92% { clip-path: inset(84% 0 4%  0); transform: translate(4px, 0); }
+    94% { clip-path: inset(12% 0 78% 0); transform: translate(-2px,-1px); }
+  }
+  /* whole-word shear only during the bursts, like a signal dropout */
+  @keyframes glitch-skew {
+    0%, 40%, 50%, 88%, 100% { transform: skew(0deg); }
+    42% { transform: skew(-1.4deg); }
+    45% { transform: skew(1deg); }
+    47% { transform: skew(-0.5deg); }
+    90% { transform: skew(1.2deg); }
+    93% { transform: skew(-0.8deg); }
+  }
+
+  /* ---- 90s Lemming easter egg: walks across BYTE, falls off the E, splat ---- */
+  .lem-stage {
+    position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 3;
+  }
+  .lemming {
+    position: absolute; left: 39%;
+    bottom: calc(100% - 0.12em);      /* stand on top of the caps */
+    width: 0.5em; height: 0.5em;    /* 11:11 sprite */
+    transform: translateX(-50%);
+    animation: lem-walk 8s linear infinite;
+    will-change: transform, left;
+  }
+  .lem-canvas { width: 100%; height: 100%; display: block;
+    image-rendering: pixelated; image-rendering: crisp-edges; }
+  @keyframes lem-legswap { 0%,49% { opacity:1; } 50%,100% { opacity:0; } }
+  @keyframes lem-bob { 0% { transform: translateY(0); } 100% { transform: translateY(-0.03em); } }
+
+  /* classic "Let's go!" squeak, as a little comic speech bubble */
+  .lem-speech {
+    position: absolute; bottom: calc(100% + 0.05em); left: 50%;
+    font-family: var(--mono); font-weight: 700; font-size: 0.15em;
+    line-height: 1; white-space: nowrap;
+    color: #0a1030; background: #fff;
+    padding: 0.5em 0.75em; border-radius: 0.7em;
+    border: 0.14em solid #16c60c;
+    box-shadow: 0 0.2em 0.6em rgba(0,0,0,0.45);
+    opacity: 0; transform: translate(-50%, 0) scale(0.4);
+    animation: lem-speech 8s linear infinite;
+  }
+  .lem-speech::after {
+    content: ''; position: absolute; top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 0.4em solid transparent; border-bottom: 0; border-top-color: #16c60c;
+  }
+  @keyframes lem-speech {
+    0%, 11%  { opacity: 0; transform: translate(-50%, 0.2em) scale(0.4); }
+    15%      { opacity: 1; transform: translate(-50%, 0) scale(1.08); }
+    17%, 24% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+    28%,100% { opacity: 0; transform: translate(-50%, -0.15em) scale(0.7); }
+  }
+
+  /* plummets in fast onto the Y, lands, walks across, then tips off the E */
+  @keyframes lem-walk {
+    0%   { left: 39%; transform: translateX(-50%) translateY(-200px) scaleY(1)    rotate(0deg);   opacity:1; }  /* high above the Y */
+    4%   { left: 39%; transform: translateX(-50%) translateY(-96px)  scaleY(1.04) rotate(0deg);   opacity:1; }  /* accelerating */
+    7%   { left: 39%; transform: translateX(-50%) translateY(-4px)   scaleY(1.08) rotate(0deg);   opacity:1; }  /* plunging onto the Y */
+    9%   { left: 39%; transform: translateX(-50%) translateY(2px)    scaleY(0.74) rotate(0deg);   opacity:1; }  /* squash on impact */
+    12%  { left: 39%; transform: translateX(-50%) translateY(0)      scaleY(1.07) rotate(0deg);   opacity:1; }  /* bounce back */
+    14%  { left: 39%; transform: translateX(-50%) translateY(0)      scaleY(1)    rotate(0deg);   opacity:1; }  /* "Let's go!" */
+    24%  { left: 41%; transform: translateX(-50%) translateY(0)      scaleY(1)    rotate(0deg);   opacity:1; }  /* steps off */
+    60%  { left: 92%; transform: translateX(-50%) translateY(0)      scaleY(1)    rotate(0deg);   opacity:1; }  /* reached the E */
+    64%  { left: 100%;transform: translateX(-50%) translateY(0.06em) scaleY(1)    rotate(9deg);   opacity:1; }  /* teeters on the edge */
+    68%  { left: 103%;transform: translateX(-50%) translateY(14px)   scaleY(1)    rotate(75deg);  opacity:1; }  /* tips over */
+    78%  { left: 105%;transform: translateX(-50%) translateY(78px)   scaleY(1)    rotate(360deg); opacity:1; }  /* tumbling */
+    86%  { left: 107%;transform: translateX(-50%) translateY(156px)  scaleY(1)    rotate(555deg); opacity:1; }  /* about to hit */
+    88%  { left: 107%;transform: translateX(-50%) translateY(164px)  scaleY(1)    rotate(560deg); opacity:0; }  /* SPLAT! */
+    99%  { left: 107%;transform: translateX(-50%) translateY(164px)  scaleY(1)    rotate(560deg); opacity:0; }
+    100% { left: 39%; transform: translateX(-50%) translateY(-200px) scaleY(1)    rotate(0deg);   opacity:0; }  /* reset up top */
+  }
+
+  .splat {
+    position: absolute; left: 107%; bottom: calc(100% - 0.12em);
+    width: 0.6em; height: 0.28em;
+    transform: translate(-50%, 164px) scale(0.2);
+    opacity: 0;
+    animation: lem-splat 8s linear infinite;
+  }
+  .splat-sprite { width: 100%; height: 100%; display: block; }
+  @keyframes lem-splat {
+    0%, 86% { opacity:0; transform: translate(-50%, 164px) scale(0.2); }
+    88%     { opacity:1; transform: translate(-50%, 164px) scale(1); }
+    95%     { opacity:1; transform: translate(-50%, 164px) scale(1); }
+    99%     { opacity:0; transform: translate(-50%, 164px) scale(1.2); }
+    100%    { opacity:0; transform: translate(-50%, 164px) scale(1.2); }
+  }
+
+  .tagline {
+    margin: 22px auto 0; max-width: 620px;
+    font-size: clamp(1rem, 2.4vw, 1.35rem);
+    color: var(--muted); line-height:1.6;
+    animation: fade-up 0.9s 0.2s both;
+  }
+  .tagline b { color: var(--ink); font-weight:600; }
+
+  /* code-style typing line */
+  .term {
+    font-family: var(--mono); font-size: 14px; color: var(--cyan);
+    margin-top: 26px; opacity:0.9;
+    animation: fade-up 0.9s 0.28s both;
+  }
+  .term .prompt { color: var(--violet); }
+  .cursor { display:inline-block; width:9px; height:1.05em;
+    background: var(--cyan); margin-left:3px; vertical-align:-2px;
+    animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50%{opacity:0;} }
+
+  /* signup */
+  form {
+    margin-top: 38px; width: min(460px, 100%);
+    display:flex; gap:10px;
+    animation: fade-up 0.9s 0.36s both;
+  }
+  input[type=email] {
+    flex:1; padding: 15px 18px; border-radius: 12px;
+    background: rgba(255,255,255,0.04); color: var(--ink);
+    border:1px solid var(--line); font-size:15px; font-family:var(--font);
+    outline:none; transition: border-color .2s, box-shadow .2s;
+  }
+  input[type=email]::placeholder { color: var(--muted); }
+  input[type=email]:focus { border-color: var(--cyan); box-shadow: var(--glow); }
+  button {
+    padding: 15px 24px; border-radius: 12px; border:none; cursor:pointer;
+    font-family: var(--font); font-weight:600; font-size:15px; color:#05060a;
+    background: linear-gradient(100deg, var(--cyan), var(--violet));
+    transition: transform .15s, filter .2s; white-space:nowrap;
+  }
+  button:hover { transform: translateY(-2px); filter: brightness(1.12); }
+  button:active { transform: translateY(0); }
+
+  .note { margin-top:14px; font-size:12.5px; color:var(--muted);
+    font-family:var(--mono); animation: fade-up 0.9s 0.42s both; }
+
+  .socials {
+    margin-top: 40px; display:flex; gap:18px; align-items:center;
+    animation: fade-up 0.9s 0.5s both;
+  }
+  .socials a {
+    color: var(--muted); text-decoration:none; font-size:13px;
+    font-family:var(--mono); letter-spacing:0.05em;
+    padding:8px 4px; transition: color .2s;
+  }
+  .socials a:hover { color: var(--cyan); }
+
+  footer {
+    position: fixed; bottom:0; left:0; right:0; z-index:5;
+    padding: 16px; text-align:center;
+    font-family:var(--mono); font-size:11px; color: var(--muted);
+    letter-spacing:0.1em;
+  }
+  footer span { color: var(--cyan); }
+
+  @keyframes fade-up { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
+
+  @media (max-width:520px){
+    form { flex-direction:column; }
+    .socials { flex-wrap:wrap; justify-content:center; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001s !important; animation-iteration-count:1 !important; }
+    .lem-stage{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+  <canvas id="stars"></canvas>
+  <div class="grid"></div>
+  <div class="aurora a"></div>
+  <div class="aurora b"></div>
+  <div class="aurora c"></div>
+  <div class="scanlines"></div>
+
+  <main class="wrap">
+    <div class="badge"><span class="dot"></span> System status: compiling</div>
+
+    <!-- Placeholder logo mark. Swap this <svg> out for the real logo when ready. -->
+    <svg class="mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="NeoByte logo placeholder">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="100" y2="100">
+          <stop offset="0" stop-color="#22e0ff"/>
+          <stop offset="0.55" stop-color="#a855ff"/>
+          <stop offset="1" stop-color="#ff4ecd"/>
+        </linearGradient>
+      </defs>
+      <rect x="8" y="8" width="84" height="84" rx="22" stroke="url(#g)" stroke-width="3"/>
+      <path d="M32 68 V32 L68 68 V32" stroke="url(#g)" stroke-width="7"
+            stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="68" cy="32" r="5" fill="#22e0ff"/>
+    </svg>
+
+    <h1>
+      <span class="neo glitch" data-text="NEO">NEO</span><span class="byte">BYTE<span class="lem-stage" aria-hidden="true"><span class="lemming"><span class="lem-speech">LET'S GO!</span><canvas id="lemCanvas" class="lem-canvas" width="11" height="11"></canvas></span><span class="splat"><svg class="splat-sprite" viewBox="0 0 20 10" xmlns="http://www.w3.org/2000/svg"><ellipse cx="10" cy="7.5" rx="8" ry="2.2" fill="#16c60c"/><ellipse cx="10" cy="8.4" rx="5" ry="1.3" fill="#2f43e0"/><rect x="2" y="3" width="1.4" height="1.4" fill="#16c60c"/><rect x="16.5" y="2.5" width="1.4" height="1.4" fill="#16c60c"/><rect x="7" y="1" width="1.4" height="1.4" fill="#f6c9a0"/><rect x="12.5" y="1.8" width="1.4" height="1.4" fill="#f6c9a0"/></svg></span></span></span>
+    </h1>
+
+    <p class="tagline">
+      <b>Vibe coding.</b> Build faster, ship weirder, and turn those ideas
+      into software that you can actually use.
+    </p>
+
+    <div class="term">
+      <span class="prompt">~/neobyte $</span> <span id="type"></span><span class="cursor"></span>
+    </div>
+
+    <form id="notify" onsubmit="return handleSubmit(event)">
+      <input type="email" id="email" placeholder="you@example.com" required aria-label="Email address" />
+      <button type="submit">Get early access</button>
+    </form>
+    <div class="note" id="note">// be first through the door — no spam, just the launch</div>
+
+    <nav class="socials">
+      <a href="#">X / TWITTER</a>
+      <a href="#">GITHUB</a>
+      <a href="mailto:build@neo-byte.co.uk">BUILD@NEO-BYTE.CO.UK</a>
+    </nav>
+  </main>
+
+  <footer>© <span id="yr"></span> NEOBYTE · <span>neo-byte.co.uk</span> · launching soon</footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* ---- typing line ---- */
+  const lines = [
+    'npm run vibe --production',
+    'deploying imagination...',
+    'compiling the future_',
+    'ship it while it feels right',
+  ];
+  const target = document.getElementById('type');
+  let li = 0, ci = 0, deleting = false;
+  function tick(){
+    const line = lines[li];
+    target.textContent = line.slice(0, ci);
+    if(!deleting && ci < line.length){ ci++; }
+    else if(!deleting && ci === line.length){ deleting = true; return setTimeout(tick, 1600); }
+    else if(deleting && ci > 0){ ci--; }
+    else { deleting = false; li = (li+1) % lines.length; }
+    setTimeout(tick, deleting ? 34 : 62);
+  }
+  tick();
+
+  /* ---- signup (front-end only placeholder) ---- */
+  function handleSubmit(e){
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const note = document.getElementById('note');
+    if(email){
+      note.innerHTML = '// you\'re on the list, <span style="color:var(--cyan)">' + email + '</span> — see you at launch ✦';
+      document.getElementById('notify').reset();
+    }
+    return false;
+  }
+
+  /* ---- starfield ---- */
+  const c = document.getElementById('stars');
+  const x = c.getContext('2d');
+  let stars = [];
+  function resize(){
+    c.width = innerWidth; c.height = innerHeight;
+    stars = Array.from({length: Math.min(160, Math.floor(innerWidth*innerHeight/9000))}, () => ({
+      x: Math.random()*c.width, y: Math.random()*c.height,
+      z: Math.random()*0.8+0.2, r: Math.random()*1.4+0.2
+    }));
+  }
+  function draw(){
+    x.clearRect(0,0,c.width,c.height);
+    for(const s of stars){
+      s.y += s.z*0.25;
+      if(s.y > c.height){ s.y = 0; s.x = Math.random()*c.width; }
+      x.globalAlpha = s.z;
+      x.fillStyle = s.z > 0.65 ? '#22e0ff' : '#e7ecff';
+      x.beginPath(); x.arc(s.x, s.y, s.r, 0, 6.28); x.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  addEventListener('resize', resize);
+  resize(); draw();
+
+  /* ---- pixel-art lemming sprite (20x26, side profile, facing right) ---- */
+  (function(){
+    var cv = document.getElementById('lemCanvas'); if(!cv) return;
+    var g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
+    var C = { G:'#00b300', B:'#5f63ff', S:'#ffebdf' };  // authentic Lemmings palette (no outline)
+    function px(x,y,c){ g.fillStyle=c; g.fillRect(x,y,1,1); }
+    // 4-frame walk cycle (11x10), transcribed pixel-for-pixel from the original sprite sheet
+    var FR = [
+      ["...GGG.....","..GGGGG....","..GGSSS....","S...SS...S.","SSSSBBSSSS.","....BB.....","....BB.....","...BBBB....","...B..B....","..SS..SS..."],
+      ["....GG.....","..GGGGG....","..GGGSS....","S...SS...S.","SSSSBBSSSS.","....BB.....","....BB.....","...BBBB....","...B..B....","..SS..SS..."],
+      ["....GG.....","...GGGG....","..GGGSS....","S...SS...S.","SSSSBBSSSS.","....BB.....","....BB.....","...BBBB....","...B..BS...","..SS..S...."],
+      ["....GG.....","...GGGG....","...GGSS....","S...SS...S.","SSSSBBSSSS.","....BB.....","....BB.....","...BBBB....","...B..BS...","..SS..S...."]
+    ];
+    function drawFrame(f){
+      g.clearRect(0,0,cv.width,cv.height);
+      var rows = FR[f % FR.length];
+      for(var y=0; y<rows.length; y++)
+        for(var x=0; x<rows[y].length; x++){
+          var ch=rows[y][x];
+          if(ch==='G') px(x,y,C.G); else if(ch==='B') px(x,y,C.B); else if(ch==='S') px(x,y,C.S);
+        }
+    }
+
+    var f=0;
+    drawFrame(0);
+    setInterval(function(){ f=(f+1)%4000; drawFrame(f); }, 130);
+  })();
+</script>
+</body>
+</html>
