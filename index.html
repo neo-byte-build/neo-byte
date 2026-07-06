@@ -391,9 +391,10 @@
       <span class="prompt">~/neobyte $</span> <span id="type"></span><span class="cursor"></span>
     </div>
 
-    <form id="notify" onsubmit="return handleSubmit(event)">
-      <input type="email" id="email" placeholder="you@example.com" required aria-label="Email address" />
-      <button type="submit">Get early access</button>
+    <form id="notify" novalidate>
+      <input type="email" id="email" name="email" placeholder="you@example.com" required aria-label="Email address" autocomplete="email" />
+      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute; left:-9999px; width:1px; height:1px; opacity:0;" />
+      <button type="submit" id="notifyBtn">Get early access</button>
     </form>
     <div class="note" id="note">// be first through the door — no spam, just the launch</div>
 
@@ -429,17 +430,57 @@
   }
   tick();
 
-  /* ---- signup (front-end only placeholder) ---- */
-  function handleSubmit(e){
-    e.preventDefault();
-    const email = document.getElementById('email').value.trim();
-    const note = document.getElementById('note');
-    if(email){
-      note.innerHTML = '// you\'re on the list, <span style="color:var(--cyan)">' + email + '</span> — see you at launch ✦';
-      document.getElementById('notify').reset();
-    }
-    return false;
+  /* ---- signup (posts to Formspree) ----
+     1) Make a free form at https://formspree.io  ->  New form  ->  set your notify email
+     2) Paste the endpoint it gives you (looks like https://formspree.io/f/abcdwxyz) below.
+        Until then it falls back to a local confirmation so the page still works.        */
+  const FORM_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+
+  const notifyForm = document.getElementById('notify');
+  const emailInput = document.getElementById('email');
+  const notifyBtn  = document.getElementById('notifyBtn');
+  const noteEl     = document.getElementById('note');
+
+  function setNote(html, color){ noteEl.innerHTML = html; noteEl.style.color = color || ''; }
+  function onList(email){
+    setNote('// you\'re on the list, <span style="color:var(--cyan)">' + email + '</span> — see you at launch ✦');
+    notifyForm.reset();
   }
+
+  notifyForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const email = (emailInput.value || '').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      setNote('// hmm, that email doesn\'t look right', 'var(--pink)');
+      emailInput.focus();
+      return;
+    }
+
+    // Not configured yet → confirm locally so nothing looks broken.
+    if(FORM_ENDPOINT.indexOf('YOUR_FORM_ID') !== -1){ onList(email); return; }
+
+    const label = notifyBtn.textContent;
+    notifyBtn.disabled = true; notifyBtn.textContent = 'Sending…';
+    setNote('// signing you up…', 'var(--muted)');
+
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Accept': 'application/json' },
+        body: new FormData(notifyForm)
+      });
+      if(res.ok){ onList(email); }
+      else {
+        const data = await res.json().catch(function(){ return {}; });
+        const msg = (data.errors && data.errors[0] && data.errors[0].message) || 'something went wrong';
+        setNote('// ' + msg + ' — try again?', 'var(--pink)');
+      }
+    } catch(err){
+      setNote('// network hiccup — please try again', 'var(--pink)');
+    } finally {
+      notifyBtn.disabled = false; notifyBtn.textContent = label;
+    }
+  });
 
   /* ---- starfield ---- */
   const c = document.getElementById('stars');
