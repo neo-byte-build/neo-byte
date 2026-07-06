@@ -392,8 +392,11 @@
     </div>
 
     <form id="notify" novalidate>
+      <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY" />
+      <input type="hidden" name="subject" value="New NeoByte early-access signup" />
+      <input type="hidden" name="from_name" value="NeoByte site" />
       <input type="email" id="email" name="email" placeholder="you@example.com" required aria-label="Email address" autocomplete="email" />
-      <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute; left:-9999px; width:1px; height:1px; opacity:0;" />
+      <input type="checkbox" name="botcheck" tabindex="-1" aria-hidden="true" style="display:none" />
       <button type="submit" id="notifyBtn">Get early access</button>
     </form>
     <div class="note" id="note">// be first through the door — no spam, just the launch</div>
@@ -430,11 +433,11 @@
   }
   tick();
 
-  /* ---- signup (posts to Formspree) ----
-     1) Make a free form at https://formspree.io  ->  New form  ->  set your notify email
-     2) Paste the endpoint it gives you (looks like https://formspree.io/f/abcdwxyz) below.
-        Until then it falls back to a local confirmation so the page still works.        */
-  const FORM_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+  /* ---- signup (posts to Web3Forms — no account needed) ----
+     Get a free access key at https://web3forms.com : enter the email you want sign-ups
+     delivered to, and the key is emailed to you. Paste it into the hidden access_key
+     field in the form above. Until then it confirms locally so the page still works.    */
+  const FORM_ENDPOINT = 'https://api.web3forms.com/submit';
 
   const notifyForm = document.getElementById('notify');
   const emailInput = document.getElementById('email');
@@ -457,7 +460,8 @@
     }
 
     // Not configured yet → confirm locally so nothing looks broken.
-    if(FORM_ENDPOINT.indexOf('YOUR_FORM_ID') !== -1){ onList(email); return; }
+    const keyEl = notifyForm.querySelector('[name="access_key"]');
+    if(!keyEl || keyEl.value.indexOf('YOUR_ACCESS_KEY') !== -1){ onList(email); return; }
 
     const label = notifyBtn.textContent;
     notifyBtn.disabled = true; notifyBtn.textContent = 'Sending…';
@@ -469,12 +473,9 @@
         headers: { 'Accept': 'application/json' },
         body: new FormData(notifyForm)
       });
-      if(res.ok){ onList(email); }
-      else {
-        const data = await res.json().catch(function(){ return {}; });
-        const msg = (data.errors && data.errors[0] && data.errors[0].message) || 'something went wrong';
-        setNote('// ' + msg + ' — try again?', 'var(--pink)');
-      }
+      const data = await res.json().catch(function(){ return {}; });
+      if(res.ok && data.success){ onList(email); }
+      else { setNote('// ' + (data.message || 'something went wrong') + ' — try again?', 'var(--pink)'); }
     } catch(err){
       setNote('// network hiccup — please try again', 'var(--pink)');
     } finally {
