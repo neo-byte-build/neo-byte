@@ -3,351 +3,312 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>NeoByte — Vibe Coding, Reimagined</title>
-<meta name="description" content="NeoByte is coming soon. Vibe coding, reimagined — build faster, ship weirder, dream in code." />
+<title>NeoByte — Vibe Coding Studio · Idea to software in weeks</title>
+<meta name="description" content="NeoByte is a vibe-coding studio. Bring an idea, we build it into real, usable software — fast. Validate in a week, ship an MVP in a month." />
 <meta name="theme-color" content="#05060a" />
 
 <!-- Open Graph -->
-<meta property="og:title" content="NeoByte — Vibe Coding, Reimagined" />
-<meta property="og:description" content="Something new is compiling. Vibe coding, reimagined." />
+<meta property="og:title" content="NeoByte — Vibe Coding Studio" />
+<meta property="og:description" content="Turn your idea into software you can actually use — shipped in weeks, not quarters." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://neo-byte.co.uk" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
 <style>
   :root {
     --bg:        #05060a;
     --bg-soft:   #0a0d16;
+    --panel:     rgba(255,255,255,0.025);
+    --panel-2:   rgba(255,255,255,0.045);
     --cyan:      #22e0ff;
     --violet:    #a855ff;
     --pink:      #ff4ecd;
     --ink:       #e7ecff;
     --muted:     #7c86a8;
-    --line:      rgba(120,140,220,0.14);
+    --line:      rgba(120,140,220,0.16);
+    --line-2:    rgba(120,140,220,0.28);
     --glow:      0 0 40px rgba(34,224,255,0.35);
+    --grad:      linear-gradient(100deg, var(--cyan), var(--violet) 55%, var(--pink));
     --font:      'Space Grotesk', 'Segoe UI', system-ui, -apple-system, sans-serif;
     --mono:      'JetBrains Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+    --maxw:      1140px;
   }
 
   * { margin:0; padding:0; box-sizing:border-box; }
-
-  html, body { height:100%; }
-
+  html { scroll-behavior: smooth; scroll-padding-top: 90px; }
   body {
     font-family: var(--font);
     background: var(--bg);
     color: var(--ink);
     overflow-x: hidden;
     min-height: 100vh;
-    position: relative;
     -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
   }
+  a { color: inherit; text-decoration: none; }
+  img, svg, canvas { display: block; max-width: 100%; }
 
-  /* ---------- animated background layers ---------- */
-  #stars {
-    position: fixed; inset: 0; z-index: 0;
-    display: block;
-  }
-
+  /* ---------- fixed animated backdrop ---------- */
+  #stars { position: fixed; inset: 0; z-index: 0; }
   .grid {
-    position: fixed; inset: -50% 0 0 0; z-index: 1;
+    position: fixed; inset: -50% 0 40% 0; z-index: 0;
     background-image:
       linear-gradient(var(--line) 1px, transparent 1px),
       linear-gradient(90deg, var(--line) 1px, transparent 1px);
-    background-size: 46px 46px;
-    transform: perspective(420px) rotateX(58deg);
+    background-size: 48px 48px;
+    transform: perspective(440px) rotateX(60deg);
     transform-origin: top center;
-    mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 55%, transparent 78%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 55%, transparent 78%);
-    animation: grid-scroll 8s linear infinite;
-    opacity: 0.55;
+    mask-image: linear-gradient(to bottom, transparent, #000 15%, #000 45%, transparent 70%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 15%, #000 45%, transparent 70%);
+    animation: grid-scroll 9s linear infinite;
+    opacity: 0.5;
   }
-  @keyframes grid-scroll {
-    from { background-position: 0 0, 0 0; }
-    to   { background-position: 0 46px, 0 46px; }
-  }
+  @keyframes grid-scroll { from { background-position:0 0,0 0; } to { background-position:0 48px,0 48px; } }
+  .aurora { position: fixed; z-index: 0; border-radius: 50%; filter: blur(100px); opacity: 0.42; pointer-events:none; }
+  .aurora.a { top:-14%; left:-10%; width:44vw; height:44vw; background: radial-gradient(circle, var(--violet), transparent 62%); animation: drift 18s ease-in-out infinite alternate; }
+  .aurora.b { top:22%; right:-14%; width:50vw; height:50vw; background: radial-gradient(circle, var(--cyan), transparent 62%); animation: drift 22s ease-in-out infinite alternate-reverse; }
+  .aurora.c { top:64%; left:18%; width:34vw; height:34vw; background: radial-gradient(circle, var(--pink), transparent 65%); opacity:0.26; animation: drift 26s ease-in-out infinite alternate; }
+  @keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(6vw,4vh) scale(1.15); } }
+  .scanlines { position: fixed; inset:0; z-index:1; pointer-events:none; opacity:0.35;
+    background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.16) 3px); mix-blend-mode: overlay; }
 
-  .aurora {
-    position: fixed; z-index: 1; border-radius: 50%;
-    filter: blur(90px); opacity: 0.5; pointer-events: none;
+  /* ---------- layout helpers ---------- */
+  .container { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+  .section { position: relative; z-index: 2; padding: 96px 0; }
+  .section-head { max-width: 640px; margin-bottom: 46px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--cyan); display: inline-flex; align-items: center; gap: 10px; margin-bottom: 18px;
   }
-  .aurora.a { top:-12%; left:-8%; width:46vw; height:46vw;
-    background: radial-gradient(circle, var(--violet), transparent 62%);
-    animation: drift 16s ease-in-out infinite alternate; }
-  .aurora.b { bottom:-18%; right:-10%; width:52vw; height:52vw;
-    background: radial-gradient(circle, var(--cyan), transparent 62%);
-    animation: drift 20s ease-in-out infinite alternate-reverse; }
-  .aurora.c { top:30%; right:20%; width:30vw; height:30vw;
-    background: radial-gradient(circle, var(--pink), transparent 65%);
-    opacity:0.3; animation: drift 24s ease-in-out infinite alternate; }
-  @keyframes drift {
-    from { transform: translate(0,0) scale(1); }
-    to   { transform: translate(6vw,4vh) scale(1.15); }
-  }
+  .eyebrow::before { content: ""; width: 26px; height: 1px; background: var(--cyan); opacity:0.7; }
+  h2.title { font-size: clamp(1.9rem, 4.4vw, 3rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+  .lead { color: var(--muted); font-size: clamp(1rem, 1.6vw, 1.15rem); margin-top: 16px; }
+  .grad-text { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
-  .scanlines {
-    position: fixed; inset:0; z-index: 2; pointer-events:none;
-    background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,0.16) 3px);
-    mix-blend-mode: overlay; opacity:0.4;
-  }
+  /* ---------- buttons ---------- */
+  .btn { display:inline-flex; align-items:center; gap:9px; padding: 13px 22px; border-radius: 12px;
+    font-family: var(--font); font-weight: 600; font-size: 15px; cursor: pointer; border: none;
+    transition: transform .15s, filter .2s, box-shadow .2s; white-space: nowrap; }
+  .btn-primary { color:#05060a; background: var(--grad); box-shadow: 0 6px 30px rgba(120,90,255,0.28); }
+  .btn-primary:hover { transform: translateY(-2px); filter: brightness(1.1); }
+  .btn-ghost { color: var(--ink); background: var(--panel); border: 1px solid var(--line-2); }
+  .btn-ghost:hover { border-color: var(--cyan); box-shadow: var(--glow); transform: translateY(-2px); }
+  .btn.sm { padding: 9px 16px; font-size: 14px; }
 
-  /* ---------- content ---------- */
-  .wrap {
-    position: relative; z-index: 5;
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    text-align: center;
-    padding: 40px 22px 90px;
+  /* ---------- nav ---------- */
+  header.nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    transition: background .3s, border-color .3s, backdrop-filter .3s;
+    border-bottom: 1px solid transparent;
   }
+  header.nav.scrolled { background: rgba(5,6,10,0.72); backdrop-filter: blur(14px); border-bottom-color: var(--line); }
+  .nav-inner { display:flex; align-items:center; justify-content:space-between; height: 72px; }
+  .brand-lockup { display:flex; align-items:center; gap:11px; font-weight:700; letter-spacing:0.02em; font-size: 18px; }
+  .brand-lockup .logo-sm { width: 40px; height: auto; }
+  .brand-lockup .b { background: var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .nav-links { display:flex; align-items:center; gap:30px; }
+  .nav-links a.link { font-size: 14.5px; color: var(--muted); transition: color .2s; }
+  .nav-links a.link:hover { color: var(--ink); }
+  .nav-cta { display:flex; align-items:center; gap:14px; }
+  .menu-btn { display:none; background:none; border:none; color:var(--ink); cursor:pointer; padding:8px; }
+  .menu-btn svg { width:26px; height:26px; }
 
-  .badge {
-    display:inline-flex; align-items:center; gap:9px;
-    font-family: var(--mono); font-size: 12px; letter-spacing:0.18em;
-    text-transform: uppercase; color: var(--cyan);
-    border:1px solid rgba(34,224,255,0.35);
-    padding: 8px 16px; border-radius: 999px;
-    background: rgba(34,224,255,0.05);
-    backdrop-filter: blur(6px);
-    box-shadow: var(--glow);
-    animation: fade-up 0.9s both;
-  }
-  .dot {
-    width:8px; height:8px; border-radius:50%; background: var(--cyan);
-    box-shadow:0 0 10px var(--cyan);
-    animation: pulse 1.4s ease-in-out infinite;
-  }
+  /* ---------- hero ---------- */
+  .hero { position: relative; z-index: 2; padding: 130px 0 80px; text-align: center; }
+  .badge { display:inline-flex; align-items:center; gap:9px; font-family: var(--mono); font-size: 12px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--cyan);
+    border:1px solid rgba(34,224,255,0.32); padding: 7px 15px; border-radius: 999px;
+    background: rgba(34,224,255,0.05); backdrop-filter: blur(6px); box-shadow: var(--glow); }
+  .dot { width:7px; height:7px; border-radius:50%; background: var(--cyan); box-shadow:0 0 10px var(--cyan); animation: pulse 1.4s ease-in-out infinite; }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.35;transform:scale(.7);} }
 
-  /* logo mark (placeholder — no logo yet) */
-  .mark {
-    margin: 34px auto 8px;
-    width: 92px; height: 92px;
-    animation: fade-up 0.9s 0.05s both, floaty 6s ease-in-out infinite;
-  }
+  .mark { width: 132px; height: auto; margin: 26px auto 6px; animation: floaty 6s ease-in-out infinite; }
   @keyframes floaty { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-9px);} }
 
-  h1 {
-    font-size: clamp(3rem, 13vw, 8.5rem);
-    font-weight: 700; line-height: 0.92; letter-spacing: -0.03em;
-    animation: fade-up 0.9s 0.1s both;
-    position: relative;
-  }
+  .brand-wordmark { font-size: clamp(2.6rem, 9vw, 5.4rem); font-weight: 700; line-height: 0.9; letter-spacing: -0.03em; position: relative; }
   .neo { color: var(--ink); }
-  .byte {
-    position: relative;
-    background: linear-gradient(100deg, var(--cyan), var(--violet) 55%, var(--pink));
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-  /* ---- Black Mirror glitch ---- */
-  .glitch { position: relative; display:inline-block;
-    animation: glitch-skew 5s infinite steps(6, end); }
-  .glitch::before, .glitch::after {
-    content: attr(data-text); position:absolute; top:0; left:0;
-    width:100%; height:100%; background: var(--bg);
-    overflow: hidden;
-  }
-  /* red/pink channel — hidden until a burst fires */
-  .glitch::before {
-    color: var(--pink);
-    text-shadow: -2px 0 var(--pink);
-    clip-path: inset(50% 0 50% 0);
-    animation: glitch-anim-1 9s infinite steps(2, end);
-  }
-  /* cyan channel — hidden until a burst fires */
-  .glitch::after {
-    color: var(--cyan);
-    text-shadow: -2px 0 var(--cyan), 2px 2px var(--violet);
-    clip-path: inset(50% 0 50% 0);
-    animation: glitch-anim-2 9s infinite steps(2, end);
-  }
+  .byte { position: relative; background: var(--grad); -webkit-background-clip:text; background-clip:text; color: transparent; }
 
-  /* Clean ~93% of the time; two short torn-scan bursts per 9s cycle. */
+  h1.hero-title { font-size: clamp(2.1rem, 5.6vw, 3.9rem); font-weight: 700; letter-spacing: -0.025em;
+    line-height: 1.04; margin: 30px auto 0; max-width: 900px; }
+  .hero-sub { color: var(--muted); font-size: clamp(1.02rem, 2vw, 1.28rem); max-width: 620px; margin: 20px auto 0; }
+  .hero-cta { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top: 34px; }
+  .hero-badges { margin-top: 22px; font-family: var(--mono); font-size: 12.5px; color: var(--muted); letter-spacing: 0.06em; }
+  .hero-badges b { color: var(--ink); font-weight: 500; }
+
+  /* stats */
+  .stats { display:grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 58px; }
+  .stat { border:1px solid var(--line); background: var(--panel); border-radius: 16px; padding: 22px 16px; }
+  .stat .num { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 700; letter-spacing: -0.02em; }
+  .stat .lbl { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.08em; color: var(--muted); margin-top: 6px; text-transform: uppercase; }
+
+  /* tech strip */
+  .techstrip { margin-top: 54px; }
+  .techstrip .cap { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); opacity:0.8; margin-bottom: 16px; }
+  .techstrip .row { display:flex; flex-wrap:wrap; gap:10px 12px; justify-content:center; }
+  .pill { font-family: var(--mono); font-size: 13px; color: var(--ink); opacity:0.72; border:1px solid var(--line); border-radius: 999px; padding: 7px 14px; }
+
+  /* ---------- cards / grids ---------- */
+  .card { border: 1px solid var(--line); background: var(--panel); border-radius: 18px; padding: 26px;
+    transition: transform .2s, border-color .2s, background .2s; position: relative; overflow: hidden; }
+  .card:hover { transform: translateY(-4px); border-color: var(--line-2); background: var(--panel-2); }
+  .card .tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); }
+  .card h3 { font-size: 1.3rem; font-weight: 600; margin: 12px 0 8px; letter-spacing: -0.01em; }
+  .card p { color: var(--muted); font-size: 0.96rem; }
+
+  .work-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .work-card .accent { position:absolute; inset:0 auto 0 0; width:3px; background: var(--grad); opacity:0.9; }
+  .work-meta { display:flex; gap: 18px; margin-top: 18px; padding-top: 16px; border-top:1px solid var(--line); flex-wrap:wrap; }
+  .work-meta div span { display:block; }
+  .work-meta .k { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+  .work-meta .v { font-weight: 600; font-size: 0.95rem; margin-top: 3px; }
+
+  .steps { display:grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .step { display:flex; flex-direction:column; }
+  .step.feature { border-color: rgba(34,224,255,0.35); box-shadow: 0 0 50px rgba(34,224,255,0.08); }
+  .step .price { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; margin: 6px 0 2px; }
+  .step .price small { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
+  .step .when { font-family: var(--mono); font-size: 12px; color: var(--cyan); letter-spacing: 0.06em; }
+  .step ul { list-style: none; margin: 20px 0 24px; display:flex; flex-direction:column; gap: 11px; }
+  .step li { display:flex; gap:10px; font-size: 0.94rem; color: var(--ink); }
+  .step li::before { content:"→"; color: var(--violet); }
+  .step .btn { margin-top: auto; justify-content:center; }
+  .ribbon { position:absolute; top:14px; right:-30px; transform: rotate(45deg); background: var(--grad);
+    color:#05060a; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; font-weight:600; padding: 4px 34px; }
+
+  /* partnership */
+  .partner { display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items:center; }
+  .partner .panel { border:1px solid var(--line); background: var(--panel); border-radius: 18px; padding: 28px; }
+  .split-row { display:flex; justify-content:space-between; padding: 13px 0; border-bottom: 1px dashed var(--line); font-size: 0.95rem; }
+  .split-row:last-child { border-bottom: none; }
+  .split-row .val { font-weight: 600; }
+  .split-row.total .val { color: var(--cyan); }
+
+  /* testimonials */
+  .quotes { display:grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .quote p { font-size: 1.02rem; color: var(--ink); line-height: 1.6; }
+  .quote .who { margin-top: 20px; display:flex; align-items:center; gap: 12px; }
+  .quote .av { width: 40px; height: 40px; border-radius: 50%; background: var(--grad); flex: 0 0 auto; }
+  .quote .who .n { font-weight: 600; font-size: 0.92rem; }
+  .quote .who .r { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+  /* products */
+  .prod-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .prod-card { display:flex; gap: 18px; align-items:flex-start; }
+  .prod-ico { width: 46px; height: 46px; flex:0 0 auto; border-radius: 12px; display:grid; place-items:center;
+    background: rgba(34,224,255,0.08); border:1px solid var(--line-2); font-size: 22px; }
+  .prod-card .try { font-family: var(--mono); font-size: 12px; color: var(--cyan); margin-top: 12px; display:inline-block; }
+
+  /* FAQ */
+  .faq { max-width: 820px; margin: 0 auto; }
+  .qa { border-bottom: 1px solid var(--line); }
+  .qa button { width:100%; text-align:left; background:none; border:none; color:var(--ink); cursor:pointer;
+    font-family: var(--font); font-size: 1.08rem; font-weight: 500; padding: 22px 0; display:flex; justify-content:space-between; gap:20px; align-items:center; }
+  .qa .plus { color: var(--cyan); font-size: 1.4rem; line-height: 1; transition: transform .25s; flex:0 0 auto; }
+  .qa.open .plus { transform: rotate(45deg); }
+  .qa .ans { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+  .qa .ans p { color: var(--muted); padding-bottom: 22px; font-size: 0.98rem; }
+
+  /* CTA band */
+  .cta-band { position: relative; z-index: 2; }
+  .cta-inner { border:1px solid var(--line-2); border-radius: 24px; padding: 54px 40px; text-align:center;
+    background: radial-gradient(120% 140% at 50% 0%, rgba(120,90,255,0.14), transparent 60%), var(--panel); }
+  .cta-inner h2 { font-size: clamp(1.9rem, 4.4vw, 2.8rem); font-weight: 700; letter-spacing: -0.02em; }
+  .cta-inner p { color: var(--muted); margin-top: 12px; max-width: 520px; margin-inline:auto; }
+  form.signup { margin: 28px auto 0; width: min(500px, 100%); display:flex; gap:10px; }
+  form.signup input[type=email] { flex:1; padding: 14px 18px; border-radius: 12px; background: rgba(255,255,255,0.04);
+    color: var(--ink); border:1px solid var(--line-2); font-size:15px; font-family:var(--font); outline:none; transition: border-color .2s, box-shadow .2s; }
+  form.signup input[type=email]::placeholder { color: var(--muted); }
+  form.signup input[type=email]:focus { border-color: var(--cyan); box-shadow: var(--glow); }
+  .note { margin-top: 14px; font-size: 12.5px; color: var(--muted); font-family: var(--mono); }
+
+  /* footer */
+  footer.site { position: relative; z-index: 2; border-top: 1px solid var(--line); margin-top: 40px; padding: 64px 0 40px; }
+  .foot-grid { display:grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; }
+  .foot-brand p { color: var(--muted); font-size: 0.92rem; margin-top: 16px; max-width: 300px; }
+  .foot-col h4 { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+  .foot-col a { display:block; color: var(--ink); opacity:0.8; font-size: 0.94rem; padding: 5px 0; transition: color .2s, opacity .2s; }
+  .foot-col a:hover { opacity:1; color: var(--cyan); }
+  .foot-bottom { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
+    margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .foot-bottom .socials { display:flex; gap: 18px; }
+  .foot-bottom a:hover { color: var(--cyan); }
+
+  /* ---------- Black Mirror glitch (brand wordmark) ---------- */
+  .glitch { position: relative; display:inline-block; animation: glitch-skew 5s infinite steps(6, end); }
+  .glitch::before, .glitch::after { content: attr(data-text); position:absolute; top:0; left:0; width:100%; height:100%; background: var(--bg); overflow:hidden; }
+  .glitch::before { color: var(--pink); text-shadow: -2px 0 var(--pink); clip-path: inset(50% 0 50% 0); animation: glitch-anim-1 9s infinite steps(2, end); }
+  .glitch::after { color: var(--cyan); text-shadow: -2px 0 var(--cyan), 2px 2px var(--violet); clip-path: inset(50% 0 50% 0); animation: glitch-anim-2 9s infinite steps(2, end); }
   @keyframes glitch-anim-1 {
-    0%, 40%, 55%, 88%, 100% { clip-path: inset(50% 0 50% 0); transform: translate(0); }
-    /* burst A */
-    41% { clip-path: inset(16% 0 68% 0); transform: translate(-4px,-1px); }
-    43% { clip-path: inset(74% 0 8%  0); transform: translate(3px, 1px); }
-    45% { clip-path: inset(34% 0 52% 0); transform: translate(-3px, 0); }
-    47% { clip-path: inset(88% 0 3%  0); transform: translate(4px,-2px); }
-    49% { clip-path: inset(50% 0 50% 0); transform: translate(0); }
-    /* burst B */
-    89% { clip-path: inset(6%  0 84% 0); transform: translate(3px, 1px); }
-    91% { clip-path: inset(58% 0 26% 0); transform: translate(-4px, 0); }
-    93% { clip-path: inset(28% 0 60% 0); transform: translate(2px,-1px); }
-  }
+    0%,40%,55%,88%,100% { clip-path: inset(50% 0 50% 0); transform: translate(0); }
+    41%{clip-path:inset(16% 0 68% 0);transform:translate(-4px,-1px);} 43%{clip-path:inset(74% 0 8% 0);transform:translate(3px,1px);}
+    45%{clip-path:inset(34% 0 52% 0);transform:translate(-3px,0);} 47%{clip-path:inset(88% 0 3% 0);transform:translate(4px,-2px);} 49%{clip-path:inset(50% 0 50% 0);transform:translate(0);}
+    89%{clip-path:inset(6% 0 84% 0);transform:translate(3px,1px);} 91%{clip-path:inset(58% 0 26% 0);transform:translate(-4px,0);} 93%{clip-path:inset(28% 0 60% 0);transform:translate(2px,-1px);} }
   @keyframes glitch-anim-2 {
-    0%, 40%, 55%, 88%, 100% { clip-path: inset(50% 0 50% 0); transform: translate(0); }
-    /* burst A */
-    42% { clip-path: inset(64% 0 20% 0); transform: translate(4px, 1px); }
-    44% { clip-path: inset(20% 0 70% 0); transform: translate(-3px, 0); }
-    46% { clip-path: inset(80% 0 6%  0); transform: translate(3px,-1px); }
-    48% { clip-path: inset(50% 0 50% 0); transform: translate(0); }
-    /* burst B */
-    90% { clip-path: inset(40% 0 44% 0); transform: translate(-3px, 1px); }
-    92% { clip-path: inset(84% 0 4%  0); transform: translate(4px, 0); }
-    94% { clip-path: inset(12% 0 78% 0); transform: translate(-2px,-1px); }
-  }
-  /* whole-word shear only during the bursts, like a signal dropout */
-  @keyframes glitch-skew {
-    0%, 40%, 50%, 88%, 100% { transform: skew(0deg); }
-    42% { transform: skew(-1.4deg); }
-    45% { transform: skew(1deg); }
-    47% { transform: skew(-0.5deg); }
-    90% { transform: skew(1.2deg); }
-    93% { transform: skew(-0.8deg); }
-  }
+    0%,40%,55%,88%,100% { clip-path: inset(50% 0 50% 0); transform: translate(0); }
+    42%{clip-path:inset(64% 0 20% 0);transform:translate(4px,1px);} 44%{clip-path:inset(20% 0 70% 0);transform:translate(-3px,0);}
+    46%{clip-path:inset(80% 0 6% 0);transform:translate(3px,-1px);} 48%{clip-path:inset(50% 0 50% 0);transform:translate(0);}
+    90%{clip-path:inset(40% 0 44% 0);transform:translate(-3px,1px);} 92%{clip-path:inset(84% 0 4% 0);transform:translate(4px,0);} 94%{clip-path:inset(12% 0 78% 0);transform:translate(-2px,-1px);} }
+  @keyframes glitch-skew { 0%,40%,50%,88%,100%{transform:skew(0);} 42%{transform:skew(-1.4deg);} 45%{transform:skew(1deg);} 47%{transform:skew(-0.5deg);} 90%{transform:skew(1.2deg);} 93%{transform:skew(-0.8deg);} }
 
-  /* ---- 90s Lemming easter egg: walks across BYTE, falls off the E, splat ---- */
-  .lem-stage {
-    position: absolute; left: 0; top: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 3;
-  }
-  .lemming {
-    position: absolute; left: 39%;
-    bottom: calc(100% - 0.12em);      /* stand on top of the caps */
-    width: 0.5em; height: 0.5em;    /* 11:11 sprite */
-    transform: translateX(-50%);
-    animation: lem-walk 8s linear infinite;
-    will-change: transform, left;
-  }
-  .lem-canvas { width: 100%; height: 100%; display: block;
-    image-rendering: pixelated; image-rendering: crisp-edges; }
-  @keyframes lem-legswap { 0%,49% { opacity:1; } 50%,100% { opacity:0; } }
-  @keyframes lem-bob { 0% { transform: translateY(0); } 100% { transform: translateY(-0.03em); } }
-
-  /* classic "Let's go!" squeak, as a little comic speech bubble */
-  .lem-speech {
-    position: absolute; bottom: calc(100% + 0.05em); left: 50%;
-    font-family: var(--mono); font-weight: 700; font-size: 0.15em;
-    line-height: 1; white-space: nowrap;
-    color: #0a1030; background: #fff;
-    padding: 0.5em 0.75em; border-radius: 0.7em;
-    border: 0.14em solid #16c60c;
-    box-shadow: 0 0.2em 0.6em rgba(0,0,0,0.45);
-    opacity: 0; transform: translate(-50%, 0) scale(0.4);
-    animation: lem-speech 8s linear infinite;
-  }
-  .lem-speech::after {
-    content: ''; position: absolute; top: 100%; left: 50%;
-    transform: translateX(-50%);
-    border: 0.4em solid transparent; border-bottom: 0; border-top-color: #16c60c;
-  }
-  @keyframes lem-speech {
-    0%, 11%  { opacity: 0; transform: translate(-50%, 0.2em) scale(0.4); }
-    15%      { opacity: 1; transform: translate(-50%, 0) scale(1.08); }
-    17%, 24% { opacity: 1; transform: translate(-50%, 0) scale(1); }
-    28%,100% { opacity: 0; transform: translate(-50%, -0.15em) scale(0.7); }
-  }
-
-  /* plummets in fast onto the Y, lands, walks across, then tips off the E */
+  /* ---------- lemming easter egg ---------- */
+  .lem-stage { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; z-index: 3; }
+  .lemming { position: absolute; left: 39%; bottom: calc(100% - 0.12em); width: 0.5em; height: 0.5em; transform: translateX(-50%); animation: lem-walk 8s linear infinite; will-change: transform, left; }
+  .lem-canvas { width: 100%; height: 100%; image-rendering: pixelated; image-rendering: crisp-edges; }
+  .lem-speech { position:absolute; bottom: calc(100% + 0.05em); left:50%; font-family: var(--mono); font-weight:700; font-size:0.15em;
+    line-height:1; white-space:nowrap; color:#0a1030; background:#fff; padding:0.5em 0.75em; border-radius:0.7em; border:0.14em solid #16c60c;
+    box-shadow:0 0.2em 0.6em rgba(0,0,0,0.45); opacity:0; transform:translate(-50%,0) scale(0.4); animation: lem-speech 8s linear infinite; }
+  .lem-speech::after { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%); border:0.4em solid transparent; border-bottom:0; border-top-color:#16c60c; }
+  @keyframes lem-speech { 0%,11%{opacity:0;transform:translate(-50%,0.2em) scale(0.4);} 15%{opacity:1;transform:translate(-50%,0) scale(1.08);} 17%,24%{opacity:1;transform:translate(-50%,0) scale(1);} 28%,100%{opacity:0;transform:translate(-50%,-0.15em) scale(0.7);} }
   @keyframes lem-walk {
-    0%   { left: 39%; transform: translateX(-50%) translateY(-200px) scaleY(1)    rotate(0deg);   opacity:1; }  /* high above the Y */
-    4%   { left: 39%; transform: translateX(-50%) translateY(-96px)  scaleY(1.04) rotate(0deg);   opacity:1; }  /* accelerating */
-    7%   { left: 39%; transform: translateX(-50%) translateY(-4px)   scaleY(1.08) rotate(0deg);   opacity:1; }  /* plunging onto the Y */
-    9%   { left: 39%; transform: translateX(-50%) translateY(2px)    scaleY(0.74) rotate(0deg);   opacity:1; }  /* squash on impact */
-    12%  { left: 39%; transform: translateX(-50%) translateY(0)      scaleY(1.07) rotate(0deg);   opacity:1; }  /* bounce back */
-    14%  { left: 39%; transform: translateX(-50%) translateY(0)      scaleY(1)    rotate(0deg);   opacity:1; }  /* "Let's go!" */
-    24%  { left: 41%; transform: translateX(-50%) translateY(0)      scaleY(1)    rotate(0deg);   opacity:1; }  /* steps off */
-    60%  { left: 92%; transform: translateX(-50%) translateY(0)      scaleY(1)    rotate(0deg);   opacity:1; }  /* reached the E */
-    64%  { left: 100%;transform: translateX(-50%) translateY(0.06em) scaleY(1)    rotate(9deg);   opacity:1; }  /* teeters on the edge */
-    68%  { left: 103%;transform: translateX(-50%) translateY(14px)   scaleY(1)    rotate(75deg);  opacity:1; }  /* tips over */
-    78%  { left: 105%;transform: translateX(-50%) translateY(78px)   scaleY(1)    rotate(360deg); opacity:1; }  /* tumbling */
-    86%  { left: 107%;transform: translateX(-50%) translateY(156px)  scaleY(1)    rotate(555deg); opacity:1; }  /* about to hit */
-    88%  { left: 107%;transform: translateX(-50%) translateY(164px)  scaleY(1)    rotate(560deg); opacity:0; }  /* SPLAT! */
+    0%   { left: 39%; transform: translateX(-50%) translateY(-200px) scaleY(1)    rotate(0deg);   opacity:1; }
+    4%   { left: 39%; transform: translateX(-50%) translateY(-96px)  scaleY(1.04) rotate(0deg);   opacity:1; }
+    7%   { left: 39%; transform: translateX(-50%) translateY(-4px)   scaleY(1.08) rotate(0deg);   opacity:1; }
+    9%   { left: 39%; transform: translateX(-50%) translateY(2px)    scaleY(0.74) rotate(0deg);   opacity:1; }
+    12%  { left: 39%; transform: translateX(-50%) translateY(0)      scaleY(1.07) rotate(0deg);   opacity:1; }
+    14%  { left: 39%; transform: translateX(-50%) translateY(0)      scaleY(1)    rotate(0deg);   opacity:1; }
+    24%  { left: 41%; transform: translateX(-50%) translateY(0)      scaleY(1)    rotate(0deg);   opacity:1; }
+    60%  { left: 92%; transform: translateX(-50%) translateY(0)      scaleY(1)    rotate(0deg);   opacity:1; }
+    64%  { left: 100%;transform: translateX(-50%) translateY(0.06em) scaleY(1)    rotate(9deg);   opacity:1; }
+    68%  { left: 103%;transform: translateX(-50%) translateY(14px)   scaleY(1)    rotate(75deg);  opacity:1; }
+    78%  { left: 105%;transform: translateX(-50%) translateY(78px)   scaleY(1)    rotate(360deg); opacity:1; }
+    86%  { left: 107%;transform: translateX(-50%) translateY(156px)  scaleY(1)    rotate(555deg); opacity:1; }
+    88%  { left: 107%;transform: translateX(-50%) translateY(164px)  scaleY(1)    rotate(560deg); opacity:0; }
     99%  { left: 107%;transform: translateX(-50%) translateY(164px)  scaleY(1)    rotate(560deg); opacity:0; }
-    100% { left: 39%; transform: translateX(-50%) translateY(-200px) scaleY(1)    rotate(0deg);   opacity:0; }  /* reset up top */
+    100% { left: 39%; transform: translateX(-50%) translateY(-200px) scaleY(1)    rotate(0deg);   opacity:0; }
   }
+  .splat { position:absolute; left:107%; bottom: calc(100% - 0.12em); width:0.6em; height:0.28em; transform: translate(-50%,164px) scale(0.2); opacity:0; animation: lem-splat 8s linear infinite; }
+  @keyframes lem-splat { 0%,86%{opacity:0;transform:translate(-50%,164px) scale(0.2);} 88%{opacity:1;transform:translate(-50%,164px) scale(1);} 95%{opacity:1;transform:translate(-50%,164px) scale(1);} 99%{opacity:0;transform:translate(-50%,164px) scale(1.2);} 100%{opacity:0;transform:translate(-50%,164px) scale(1.2);} }
 
-  .splat {
-    position: absolute; left: 107%; bottom: calc(100% - 0.12em);
-    width: 0.6em; height: 0.28em;
-    transform: translate(-50%, 164px) scale(0.2);
-    opacity: 0;
-    animation: lem-splat 8s linear infinite;
-  }
-  .splat-sprite { width: 100%; height: 100%; display: block; }
-  @keyframes lem-splat {
-    0%, 86% { opacity:0; transform: translate(-50%, 164px) scale(0.2); }
-    88%     { opacity:1; transform: translate(-50%, 164px) scale(1); }
-    95%     { opacity:1; transform: translate(-50%, 164px) scale(1); }
-    99%     { opacity:0; transform: translate(-50%, 164px) scale(1.2); }
-    100%    { opacity:0; transform: translate(-50%, 164px) scale(1.2); }
-  }
+  /* ---------- reveal on scroll ---------- */
+  .reveal { opacity:0; transform: translateY(26px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity:1; transform:none; }
 
-  .tagline {
-    margin: 22px auto 0; max-width: 620px;
-    font-size: clamp(1rem, 2.4vw, 1.35rem);
-    color: var(--muted); line-height:1.6;
-    animation: fade-up 0.9s 0.2s both;
+  /* ---------- responsive ---------- */
+  @media (max-width: 900px) {
+    .nav-links { display:none; }
+    .menu-btn { display:block; }
+    .nav-links.open { display:flex; position:absolute; top:72px; left:0; right:0; flex-direction:column; align-items:flex-start;
+      gap:0; background: rgba(5,6,10,0.96); backdrop-filter: blur(14px); border-bottom:1px solid var(--line); padding: 8px 24px 18px; }
+    .nav-links.open a.link { padding: 12px 0; width:100%; border-bottom:1px solid var(--line); }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .work-grid, .steps, .quotes, .prod-grid { grid-template-columns: 1fr; }
+    .partner { grid-template-columns: 1fr; }
+    .foot-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
   }
-  .tagline b { color: var(--ink); font-weight:600; }
-
-  /* code-style typing line */
-  .term {
-    font-family: var(--mono); font-size: 14px; color: var(--cyan);
-    margin-top: 26px; opacity:0.9;
-    animation: fade-up 0.9s 0.28s both;
+  @media (max-width: 520px) {
+    .section { padding: 72px 0; }
+    form.signup { flex-direction: column; }
+    .foot-grid { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr 1fr; }
   }
-  .term .prompt { color: var(--violet); }
-  .cursor { display:inline-block; width:9px; height:1.05em;
-    background: var(--cyan); margin-left:3px; vertical-align:-2px;
-    animation: blink 1s steps(1) infinite; }
-  @keyframes blink { 50%{opacity:0;} }
-
-  /* signup */
-  form {
-    margin-top: 38px; width: min(460px, 100%);
-    display:flex; gap:10px;
-    animation: fade-up 0.9s 0.36s both;
-  }
-  input[type=email] {
-    flex:1; padding: 15px 18px; border-radius: 12px;
-    background: rgba(255,255,255,0.04); color: var(--ink);
-    border:1px solid var(--line); font-size:15px; font-family:var(--font);
-    outline:none; transition: border-color .2s, box-shadow .2s;
-  }
-  input[type=email]::placeholder { color: var(--muted); }
-  input[type=email]:focus { border-color: var(--cyan); box-shadow: var(--glow); }
-  button {
-    padding: 15px 24px; border-radius: 12px; border:none; cursor:pointer;
-    font-family: var(--font); font-weight:600; font-size:15px; color:#05060a;
-    background: linear-gradient(100deg, var(--cyan), var(--violet));
-    transition: transform .15s, filter .2s; white-space:nowrap;
-  }
-  button:hover { transform: translateY(-2px); filter: brightness(1.12); }
-  button:active { transform: translateY(0); }
-
-  .note { margin-top:14px; font-size:12.5px; color:var(--muted);
-    font-family:var(--mono); animation: fade-up 0.9s 0.42s both; }
-
-  .socials {
-    margin-top: 40px; display:flex; gap:18px; align-items:center;
-    animation: fade-up 0.9s 0.5s both;
-  }
-  .socials a {
-    color: var(--muted); text-decoration:none; font-size:13px;
-    font-family:var(--mono); letter-spacing:0.05em;
-    padding:8px 4px; transition: color .2s;
-  }
-  .socials a:hover { color: var(--cyan); }
-
-  footer {
-    position: fixed; bottom:0; left:0; right:0; z-index:5;
-    padding: 16px; text-align:center;
-    font-family:var(--mono); font-size:11px; color: var(--muted);
-    letter-spacing:0.1em;
-  }
-  footer span { color: var(--cyan); }
-
-  @keyframes fade-up { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
-
-  @media (max-width:520px){
-    form { flex-direction:column; }
-    .socials { flex-wrap:wrap; justify-content:center; }
-  }
-  @media (prefers-reduced-motion: reduce){
-    *{ animation-duration:0.001s !important; animation-iteration-count:1 !important; }
-    .lem-stage{ display:none; }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001s !important; animation-iteration-count: 1 !important; scroll-behavior: auto; }
+    .lem-stage { display:none; }
+    .reveal { opacity:1; transform:none; }
   }
 </style>
 </head>
@@ -360,161 +321,382 @@
   <div class="aurora c"></div>
   <div class="scanlines"></div>
 
-  <main class="wrap">
-    <div class="badge"><span class="dot"></span> System status: compiling</div>
-
-    <!-- Placeholder logo mark. Swap this <svg> out for the real logo when ready. -->
-    <svg class="mark" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="NeoByte logo placeholder">
-      <defs>
-        <linearGradient id="g" x1="0" y1="0" x2="100" y2="100">
-          <stop offset="0" stop-color="#22e0ff"/>
-          <stop offset="0.55" stop-color="#a855ff"/>
-          <stop offset="1" stop-color="#ff4ecd"/>
-        </linearGradient>
-      </defs>
-      <rect x="8" y="8" width="84" height="84" rx="22" stroke="url(#g)" stroke-width="3"/>
-      <path d="M32 68 V32 L68 68 V32" stroke="url(#g)" stroke-width="7"
-            stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="68" cy="32" r="5" fill="#22e0ff"/>
-    </svg>
-
-    <h1>
-      <span class="neo glitch" data-text="NEO">NEO</span><span class="byte">BYTE<span class="lem-stage" aria-hidden="true"><span class="lemming"><span class="lem-speech">LET'S GO!</span><canvas id="lemCanvas" class="lem-canvas" width="11" height="11"></canvas></span><span class="splat"><svg class="splat-sprite" viewBox="0 0 20 10" xmlns="http://www.w3.org/2000/svg"><ellipse cx="10" cy="7.5" rx="8" ry="2.2" fill="#16c60c"/><ellipse cx="10" cy="8.4" rx="5" ry="1.3" fill="#2f43e0"/><rect x="2" y="3" width="1.4" height="1.4" fill="#16c60c"/><rect x="16.5" y="2.5" width="1.4" height="1.4" fill="#16c60c"/><rect x="7" y="1" width="1.4" height="1.4" fill="#f6c9a0"/><rect x="12.5" y="1.8" width="1.4" height="1.4" fill="#f6c9a0"/></svg></span></span></span>
-    </h1>
-
-    <p class="tagline">
-      <b>Vibe coding.</b> Build faster, ship weirder, and turn those ideas
-      into software that you can actually use.
-    </p>
-
-    <div class="term">
-      <span class="prompt">~/neobyte $</span> <span id="type"></span><span class="cursor"></span>
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <div class="container nav-inner">
+      <a href="#top" class="brand-lockup" aria-label="NeoByte home">
+        <svg class="logo-sm" viewBox="336 163 632 292" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="lg1" x1="250" y1="160" x2="960" y2="410" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#FFFFFF"/><stop offset="0.35" stop-color="#FFFFFF"/><stop offset="0.58" stop-color="#0066FF"/><stop offset="0.83" stop-color="#7B5CFF"/><stop offset="1" stop-color="#FF3DBD"/>
+            </linearGradient>
+          </defs>
+          <path d="M 355 352 L 355 215 Q 355 183 389 183 L 408 183 Q 423 183 437 196 L 694 432 L 635 432 L 405 222 L 405 352 Q 405 378 380 378 Q 355 378 355 352 Z" fill="url(#lg1)"/>
+          <path d="M 640 432 L 735 432 L 818 432 L 766 383 L 705 383 Z" fill="url(#lg1)"/>
+          <rect x="690" y="185" width="260" height="48" rx="24" fill="url(#lg1)"/>
+          <rect x="690" y="282" width="260" height="48" rx="24" fill="url(#lg1)"/>
+          <path d="M 760 377 L 920 377 Q 950 377 950 407 Q 950 432 920 432 L 825 432 Z" fill="url(#lg1)"/>
+        </svg>
+        <span>Neo<span class="b">Byte</span></span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a class="link" href="#work">Work</a>
+        <a class="link" href="#process">Process</a>
+        <a class="link" href="#pricing">Pricing</a>
+        <a class="link" href="#products">Products</a>
+        <a class="link" href="#faq">FAQ</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="btn btn-primary sm" href="#contact">Start a build →</a>
+        <button class="menu-btn" id="menuBtn" aria-label="Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        </button>
+      </div>
     </div>
+  </header>
 
-    <form id="notify" novalidate>
-      <input type="hidden" name="access_key" value="55d6ab39-6d28-49b8-9830-0c1bfa2a1fae" />
-      <input type="hidden" name="subject" value="New NeoByte early-access signup" />
-      <input type="hidden" name="from_name" value="NeoByte site" />
-      <input type="email" id="email" name="email" placeholder="you@example.com" required aria-label="Email address" autocomplete="email" />
-      <input type="checkbox" name="botcheck" tabindex="-1" aria-hidden="true" style="display:none" />
-      <button type="submit" id="notifyBtn">Get early access</button>
-    </form>
-    <div class="note" id="note">// be first through the door — no spam, just the launch</div>
+  <!-- ============ HERO ============ -->
+  <main id="top">
+  <section class="hero">
+    <div class="container">
+      <span class="badge"><span class="dot"></span> Vibe coding studio · booking Q3</span>
 
-    <nav class="socials">
-      <a href="#">X / TWITTER</a>
-      <a href="#">GITHUB</a>
-      <a href="mailto:build@neo-byte.co.uk">BUILD@NEO-BYTE.CO.UK</a>
-    </nav>
+      <svg class="mark" viewBox="336 163 632 292" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="NeoByte logo">
+        <defs>
+          <linearGradient id="lgHero" x1="250" y1="160" x2="960" y2="410" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#FFFFFF"/><stop offset="0.35" stop-color="#FFFFFF"/><stop offset="0.58" stop-color="#0066FF"/><stop offset="0.83" stop-color="#7B5CFF"/><stop offset="1" stop-color="#FF3DBD"/>
+          </linearGradient>
+          <filter id="softGlow" x="-35%" y="-35%" width="170%" height="170%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <g filter="url(#softGlow)">
+          <path d="M 355 352 L 355 215 Q 355 183 389 183 L 408 183 Q 423 183 437 196 L 694 432 L 635 432 L 405 222 L 405 352 Q 405 378 380 378 Q 355 378 355 352 Z" fill="url(#lgHero)"/>
+          <path d="M 640 432 L 735 432 L 818 432 L 766 383 L 705 383 Z" fill="url(#lgHero)"/>
+          <rect x="690" y="185" width="260" height="48" rx="24" fill="url(#lgHero)"/>
+          <rect x="690" y="282" width="260" height="48" rx="24" fill="url(#lgHero)"/>
+          <path d="M 760 377 L 920 377 Q 950 377 950 407 Q 950 432 920 432 L 825 432 Z" fill="url(#lgHero)"/>
+        </g>
+      </svg>
+
+      <div class="brand-wordmark">
+        <span class="neo glitch" data-text="NEO">NEO</span><span class="byte">BYTE<span class="lem-stage" aria-hidden="true"><span class="lemming"><span class="lem-speech">LET'S GO!</span><canvas id="lemCanvas" class="lem-canvas" width="11" height="11"></canvas></span><span class="splat"><svg class="splat-sprite" viewBox="0 0 20 10" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%"><ellipse cx="10" cy="7.5" rx="8" ry="2.2" fill="#16c60c"/><ellipse cx="10" cy="8.4" rx="5" ry="1.3" fill="#2f43e0"/><rect x="2" y="3" width="1.4" height="1.4" fill="#16c60c"/><rect x="16.5" y="2.5" width="1.4" height="1.4" fill="#16c60c"/><rect x="7" y="1" width="1.4" height="1.4" fill="#f6c9a0"/><rect x="12.5" y="1.8" width="1.4" height="1.4" fill="#f6c9a0"/></svg></span></span></span>
+      </div>
+
+      <h1 class="hero-title">Turn your idea into <span class="grad-text">software you can actually use</span>.</h1>
+      <p class="hero-sub">NeoByte is a vibe-coding studio. You bring the idea and the taste — we bring the build. Validated in a week, real product in a month.</p>
+
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#contact">Start a build →</a>
+        <a class="btn btn-ghost" href="#work">See the work</a>
+      </div>
+      <p class="hero-badges"><b>UK-based</b> · design-led · <b>shipped in weeks</b>, not quarters</p>
+
+      <div class="stats reveal">
+        <div class="stat"><div class="num grad-text">40+</div><div class="lbl">Products shipped</div></div>
+        <div class="stat"><div class="num grad-text">21d</div><div class="lbl">Avg. build time</div></div>
+        <div class="stat"><div class="num grad-text">60%</div><div class="lbl">Cheaper than agencies</div></div>
+        <div class="stat"><div class="num grad-text">100%</div><div class="lbl">Code is yours</div></div>
+      </div>
+
+      <div class="techstrip reveal">
+        <div class="cap">Built with the modern stack</div>
+        <div class="row">
+          <span class="pill">React</span><span class="pill">Next.js</span><span class="pill">TypeScript</span><span class="pill">Supabase</span><span class="pill">Stripe</span><span class="pill">Tailwind</span><span class="pill">Vercel</span><span class="pill">OpenAI</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WORK ============ -->
+  <section class="section" id="work">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">02 — Selected work</span>
+        <h2 class="title">Real builds. <span class="grad-text">Real results.</span></h2>
+        <p class="lead">A sample of ideas we've turned into shipped, revenue-ready products. Names and numbers are illustrative — swap in your own case studies.</p>
+      </div>
+      <div class="work-grid">
+        <article class="card work-card reveal"><span class="accent"></span>
+          <span class="tag">Fintech · MVP</span>
+          <h3>PixelPay</h3>
+          <p>A split-payments app for creators. Idea to App Store in three weeks, first paying users in week four.</p>
+          <div class="work-meta"><div><span class="k">Timeline</span><span class="v">21 days</span></div><div><span class="k">Budget</span><span class="v">£18K</span></div><div><span class="k">Outcome</span><span class="v">1.2k users</span></div></div>
+        </article>
+        <article class="card work-card reveal"><span class="accent"></span>
+          <span class="tag">Creator tool · Web app</span>
+          <h3>Loop</h3>
+          <p>Short-form video scheduling with AI captions. Built solo-founder-friendly, self-serve from day one.</p>
+          <div class="work-meta"><div><span class="k">Timeline</span><span class="v">28 days</span></div><div><span class="k">Budget</span><span class="v">Self-funded</span></div><div><span class="k">Outcome</span><span class="v">Live</span></div></div>
+        </article>
+        <article class="card work-card reveal"><span class="accent"></span>
+          <span class="tag">B2B SaaS · Dashboard</span>
+          <h3>Nimbus</h3>
+          <p>Ops analytics for logistics teams. A cluttered spreadsheet workflow, rebuilt as a clean realtime dashboard.</p>
+          <div class="work-meta"><div><span class="k">Timeline</span><span class="v">30 days</span></div><div><span class="k">Budget</span><span class="v">NDA</span></div><div><span class="k">Outcome</span><span class="v">In pilot</span></div></div>
+        </article>
+        <article class="card work-card reveal"><span class="accent"></span>
+          <span class="tag">Mobile · iOS + Android</span>
+          <h3>Chirp</h3>
+          <p>A tiny habit tracker with a big personality. Cross-platform from one codebase, shipped and co-founded.</p>
+          <div class="work-meta"><div><span class="k">Timeline</span><span class="v">21 days</span></div><div><span class="k">Budget</span><span class="v">Co-built</span></div><div><span class="k">Outcome</span><span class="v">4.8★</span></div></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROCESS / PRICING ============ -->
+  <section class="section" id="process">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">03 — How it works</span>
+        <h2 class="title">Prove it. Build it. <span class="grad-text">Ship it.</span></h2>
+        <p class="lead">Three ways to work together, from a one-week gut-check to a fully shipped product and beyond. Prices are starting points.</p>
+      </div>
+      <div class="steps" id="pricing">
+        <div class="card step reveal">
+          <span class="tag">Prove it</span>
+          <div class="price">£950</div>
+          <div class="when">1 week · validation sprint</div>
+          <ul>
+            <li>Clickable prototype</li>
+            <li>Scoped build plan &amp; quote</li>
+            <li>Tech + stack recommendation</li>
+            <li>Landing page to test demand</li>
+          </ul>
+          <a class="btn btn-ghost" href="#contact">Book a sprint</a>
+        </div>
+        <div class="card step feature reveal">
+          <span class="ribbon">Popular</span>
+          <span class="tag">Build it</span>
+          <div class="price">£12k<small> from</small></div>
+          <div class="when">3–4 weeks · MVP</div>
+          <ul>
+            <li>Everything in Prove it</li>
+            <li>Production-ready MVP</li>
+            <li>Auth, payments, database</li>
+            <li>Deployed on your accounts</li>
+            <li>You own 100% of the code</li>
+          </ul>
+          <a class="btn btn-primary" href="#contact">Start a build</a>
+        </div>
+        <div class="card step reveal">
+          <span class="tag">Ship it</span>
+          <div class="price">£1–8k<small> /mo</small></div>
+          <div class="when">Ongoing · grow &amp; iterate</div>
+          <ul>
+            <li>Weekly build cadence</li>
+            <li>New features &amp; fixes</li>
+            <li>Analytics &amp; experiments</li>
+            <li>Priority support</li>
+          </ul>
+          <a class="btn btn-ghost" href="#contact">Talk retainer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PARTNERSHIP ============ -->
+  <section class="section" id="partner">
+    <div class="container">
+      <div class="partner">
+        <div class="reveal">
+          <span class="eyebrow">04 — Partnership</span>
+          <h2 class="title">We'll build it <span class="grad-text">for</span> you — or <span class="grad-text">with</span> you.</h2>
+          <p class="lead">Got the audience but not the product? Sometimes the best deal isn't an invoice. We build your idea in exchange for a slice of the upside, and share the risk with you.</p>
+          <div style="margin-top:26px"><a class="btn btn-ghost" href="#contact">Pitch us your idea</a></div>
+        </div>
+        <div class="panel reveal">
+          <div class="split-row"><span>Your audience</span><span class="val">15,000</span></div>
+          <div class="split-row"><span>Convert at 2%</span><span class="val">300 subs</span></div>
+          <div class="split-row"><span>At £15 / mo</span><span class="val">£4,500 / mo</span></div>
+          <div class="split-row total"><span>Split 50 / 50</span><span class="val">£2,250 each</span></div>
+          <p style="color:var(--muted); font-size:0.82rem; margin-top:16px; font-family:var(--mono)">// illustrative — real terms agreed per project</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TESTIMONIALS ============ -->
+  <section class="section" id="voices">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">05 — What founders say</span>
+        <h2 class="title">Shipped, and <span class="grad-text">stoked about it.</span></h2>
+        <p class="lead">Placeholder quotes — replace with real testimonials once you've got them.</p>
+      </div>
+      <div class="quotes">
+        <div class="card quote reveal"><p>"I described the vibe, they built the thing. Three weeks later it was live and taking payments. Genuinely surreal."</p><div class="who"><span class="av"></span><div><div class="n">Sam Okafor</div><div class="r">Founder, PixelPay</div></div></div></div>
+        <div class="card quote reveal"><p>"Cheaper than an agency, faster than hiring, and the code was actually clean. We picked it straight up and kept building."</p><div class="who"><span class="av"></span><div><div class="n">Priya Nair</div><div class="r">CTO, Nimbus</div></div></div></div>
+        <div class="card quote reveal"><p>"They got the joke. The product has personality, it works, and our users love it. Couldn't ask for more."</p><div class="who"><span class="av"></span><div><div class="n">Danny Cole</div><div class="r">Creator, Loop</div></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRODUCTS ============ -->
+  <section class="section" id="products">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow">06 — Products &amp; kits</span>
+        <h2 class="title">Tools we made <span class="grad-text">to move faster.</span></h2>
+        <p class="lead">The starter kits and tools we use on every build — so you're never starting from a blank file.</p>
+      </div>
+      <div class="prod-grid">
+        <div class="card prod-card reveal"><div class="prod-ico">🚀</div><div><span class="tag">Start it</span><h3>LaunchKit</h3><p>An opinionated Next.js starter with auth, billing and a design system baked in.</p><a class="try" href="#contact">Learn more →</a></div></div>
+        <div class="card prod-card reveal"><div class="prod-ico">🎨</div><div><span class="tag">Design it</span><h3>Vibe UI</h3><p>A neon-leaning component library for shipping good-looking apps fast.</p><a class="try" href="#contact">Learn more →</a></div></div>
+        <div class="card prod-card reveal"><div class="prod-ico">🧠</div><div><span class="tag">Prompt it</span><h3>PromptPacks</h3><p>Battle-tested prompt sets for scaffolding, refactoring and reviewing code.</p><a class="try" href="#contact">Learn more →</a></div></div>
+        <div class="card prod-card reveal"><div class="prod-ico">✅</div><div><span class="tag">Ship it</span><h3>ShipCheck</h3><p>A pre-launch checklist that catches the boring things before your users do.</p><a class="try" href="#contact">Learn more →</a></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-head reveal" style="margin-inline:auto; text-align:center">
+        <span class="eyebrow" style="justify-content:center">07 — Questions</span>
+        <h2 class="title">Good questions, <span class="grad-text">straight answers.</span></h2>
+      </div>
+      <div class="faq">
+        <div class="qa reveal"><button>What exactly is "vibe coding"? <span class="plus">+</span></button><div class="ans"><p>It's building software led by taste and intent rather than endless specs — rapid, AI-assisted, prototype-first. You describe the feeling and function you want; we translate that into clean, production code, fast.</p></div></div>
+        <div class="qa reveal"><button>How can you build so quickly? <span class="plus">+</span></button><div class="ans"><p>A modern stack, our own starter kits, and heavy use of AI tooling — plus a tight, senior team and no bloated agency process. We scope hard, cut cleverly, and ship the smallest thing that's genuinely useful first.</p></div></div>
+        <div class="qa reveal"><button>Do I own the code and the IP? <span class="plus">+</span></button><div class="ans"><p>Yes — 100%. Everything is built on your accounts (GitHub, hosting, database, Stripe) and handed over in full. No lock-in, no per-seat licensing on your own product.</p></div></div>
+        <div class="qa reveal"><button>What if I'm not technical? <span class="plus">+</span></button><div class="ans"><p>Perfect — most of our founders aren't. You bring the idea, the audience and the taste; we handle everything technical and explain decisions in plain English.</p></div></div>
+        <div class="qa reveal"><button>What stack do you build on? <span class="plus">+</span></button><div class="ans"><p>Typically Next.js + TypeScript, Supabase or Postgres, Stripe for payments, and Vercel for hosting — with AI features via the latest models where they add value. We pick boring, reliable tools so your product is easy to maintain.</p></div></div>
+        <div class="qa reveal"><button>Can we work on a revenue share? <span class="plus">+</span></button><div class="ans"><p>Sometimes, yes. If you've got distribution and a strong idea, we're open to building it with you for equity or a revenue split instead of a full fee. Pitch us.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CTA / CONTACT ============ -->
+  <section class="section cta-band" id="contact">
+    <div class="container">
+      <div class="cta-inner reveal">
+        <span class="eyebrow" style="justify-content:center">Got an idea?</span>
+        <h2>Let's <span class="grad-text">build it.</span></h2>
+        <p>Tell us where to reach you and a one-liner on what you're making. We'll come back within a day with next steps.</p>
+        <form class="signup" id="notify" novalidate>
+          <input type="hidden" name="access_key" value="55d6ab39-6d28-49b8-9830-0c1bfa2a1fae" />
+          <input type="hidden" name="subject" value="New NeoByte enquiry" />
+          <input type="hidden" name="from_name" value="NeoByte site" />
+          <input type="email" id="email" name="email" placeholder="you@example.com" required aria-label="Email address" autocomplete="email" />
+          <input type="checkbox" name="botcheck" tabindex="-1" aria-hidden="true" style="display:none" />
+          <button type="submit" id="notifyBtn" class="btn btn-primary">Start a build →</button>
+        </form>
+        <div class="note" id="note">// or email <a href="mailto:build@neo-byte.co.uk" style="color:var(--cyan)">build@neo-byte.co.uk</a> — no spam, ever</div>
+      </div>
+    </div>
+  </section>
   </main>
 
-  <footer>© <span id="yr"></span> NEOBYTE · <span>neo-byte.co.uk</span> · launching soon</footer>
+  <!-- ============ FOOTER ============ -->
+  <footer class="site">
+    <div class="container">
+      <div class="foot-grid">
+        <div class="foot-brand">
+          <a href="#top" class="brand-lockup" aria-label="NeoByte home">
+            <svg class="logo-sm" viewBox="336 163 632 292" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs><linearGradient id="lgF" x1="250" y1="160" x2="960" y2="410" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF"/><stop offset="0.35" stop-color="#FFFFFF"/><stop offset="0.58" stop-color="#0066FF"/><stop offset="0.83" stop-color="#7B5CFF"/><stop offset="1" stop-color="#FF3DBD"/></linearGradient></defs>
+              <path d="M 355 352 L 355 215 Q 355 183 389 183 L 408 183 Q 423 183 437 196 L 694 432 L 635 432 L 405 222 L 405 352 Q 405 378 380 378 Q 355 378 355 352 Z" fill="url(#lgF)"/>
+              <path d="M 640 432 L 735 432 L 818 432 L 766 383 L 705 383 Z" fill="url(#lgF)"/>
+              <rect x="690" y="185" width="260" height="48" rx="24" fill="url(#lgF)"/>
+              <rect x="690" y="282" width="260" height="48" rx="24" fill="url(#lgF)"/>
+              <path d="M 760 377 L 920 377 Q 950 377 950 407 Q 950 432 920 432 L 825 432 Z" fill="url(#lgF)"/>
+            </svg>
+            <span>Neo<span class="b">Byte</span></span>
+          </a>
+          <p>A vibe-coding studio turning ideas into software you can actually use — shipped in weeks, not quarters.</p>
+        </div>
+        <div class="foot-col">
+          <h4>Studio</h4>
+          <a href="#work">Work</a><a href="#process">Process</a><a href="#pricing">Pricing</a><a href="#partner">Partnership</a>
+        </div>
+        <div class="foot-col">
+          <h4>Products</h4>
+          <a href="#products">LaunchKit</a><a href="#products">Vibe UI</a><a href="#products">PromptPacks</a><a href="#products">ShipCheck</a>
+        </div>
+        <div class="foot-col">
+          <h4>Company</h4>
+          <a href="#faq">FAQ</a><a href="#contact">Contact</a><a href="mailto:build@neo-byte.co.uk">build@neo-byte.co.uk</a>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© <span id="yr"></span> NeoByte · Built with vibes · UK</span>
+        <span class="socials"><a href="#">X / Twitter</a><a href="#">GitHub</a><a href="#">Privacy</a></span>
+      </div>
+    </div>
+  </footer>
 
 <script>
+  /* year */
   document.getElementById('yr').textContent = new Date().getFullYear();
 
-  /* ---- typing line ---- */
-  const lines = [
-    'npm run vibe --production',
-    'deploying imagination...',
-    'compiling the future_',
-    'ship it while it feels right',
-  ];
-  const target = document.getElementById('type');
-  let li = 0, ci = 0, deleting = false;
-  function tick(){
-    const line = lines[li];
-    target.textContent = line.slice(0, ci);
-    if(!deleting && ci < line.length){ ci++; }
-    else if(!deleting && ci === line.length){ deleting = true; return setTimeout(tick, 1600); }
-    else if(deleting && ci > 0){ ci--; }
-    else { deleting = false; li = (li+1) % lines.length; }
-    setTimeout(tick, deleting ? 34 : 62);
-  }
-  tick();
+  /* nav: scrolled state + mobile menu */
+  var nav = document.getElementById('nav');
+  var navLinks = document.getElementById('navLinks');
+  var menuBtn = document.getElementById('menuBtn');
+  function onScroll(){ nav.classList.toggle('scrolled', window.scrollY > 20); }
+  window.addEventListener('scroll', onScroll); onScroll();
+  menuBtn.addEventListener('click', function(){ navLinks.classList.toggle('open'); });
+  navLinks.addEventListener('click', function(e){ if(e.target.classList.contains('link')) navLinks.classList.remove('open'); });
 
-  /* ---- signup (posts to Web3Forms — no account needed) ----
-     Get a free access key at https://web3forms.com : enter the email you want sign-ups
-     delivered to, and the key is emailed to you. Paste it into the hidden access_key
-     field in the form above. Until then it confirms locally so the page still works.    */
-  const FORM_ENDPOINT = 'https://api.web3forms.com/submit';
+  /* reveal on scroll */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
 
-  const notifyForm = document.getElementById('notify');
-  const emailInput = document.getElementById('email');
-  const notifyBtn  = document.getElementById('notifyBtn');
-  const noteEl     = document.getElementById('note');
+  /* FAQ accordion */
+  document.querySelectorAll('.qa button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var qa = btn.parentElement;
+      var ans = qa.querySelector('.ans');
+      var open = qa.classList.toggle('open');
+      ans.style.maxHeight = open ? (ans.scrollHeight + 'px') : '0px';
+    });
+  });
 
+  /* ---- signup (Web3Forms) ---- */
+  var FORM_ENDPOINT = 'https://api.web3forms.com/submit';
+  var notifyForm = document.getElementById('notify');
+  var emailInput = document.getElementById('email');
+  var notifyBtn  = document.getElementById('notifyBtn');
+  var noteEl     = document.getElementById('note');
   function setNote(html, color){ noteEl.innerHTML = html; noteEl.style.color = color || ''; }
-  function onList(email){
-    setNote('// you\'re on the list, <span style="color:var(--cyan)">' + email + '</span> — see you at launch ✦');
-    notifyForm.reset();
-  }
-
-  notifyForm.addEventListener('submit', async function(e){
+  function onList(email){ setNote('// nice — we\'ll be in touch at <span style="color:var(--cyan)">' + email + '</span> within a day ✦'); notifyForm.reset(); }
+  notifyForm.addEventListener('submit', function(e){
     e.preventDefault();
-    const email = (emailInput.value || '').trim();
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-      setNote('// hmm, that email doesn\'t look right', 'var(--pink)');
-      emailInput.focus();
-      return;
-    }
-
-    // Not configured yet → confirm locally so nothing looks broken.
-    const keyEl = notifyForm.querySelector('[name="access_key"]');
+    var email = (emailInput.value || '').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ setNote('// hmm, that email doesn\'t look right', 'var(--pink)'); emailInput.focus(); return; }
+    var keyEl = notifyForm.querySelector('[name="access_key"]');
     if(!keyEl || keyEl.value.indexOf('YOUR_ACCESS_KEY') !== -1){ onList(email); return; }
-
-    const label = notifyBtn.textContent;
+    var label = notifyBtn.textContent;
     notifyBtn.disabled = true; notifyBtn.textContent = 'Sending…';
-    setNote('// signing you up…', 'var(--muted)');
-
-    try {
-      const res = await fetch(FORM_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json' },
-        body: new FormData(notifyForm)
-      });
-      const data = await res.json().catch(function(){ return {}; });
-      if(res.ok && data.success){ onList(email); }
-      else { setNote('// ' + (data.message || 'something went wrong') + ' — try again?', 'var(--pink)'); }
-    } catch(err){
-      setNote('// network hiccup — please try again', 'var(--pink)');
-    } finally {
-      notifyBtn.disabled = false; notifyBtn.textContent = label;
-    }
+    setNote('// sending…', 'var(--muted)');
+    fetch(FORM_ENDPOINT, { method:'POST', headers:{'Accept':'application/json'}, body: new FormData(notifyForm) })
+      .then(function(res){ return res.json().then(function(d){ return { ok: res.ok, d: d }; }); })
+      .then(function(r){ if(r.ok && r.d.success){ onList(email); } else { setNote('// ' + (r.d.message || 'something went wrong') + ' — try again?', 'var(--pink)'); } })
+      .catch(function(){ setNote('// network hiccup — please try again', 'var(--pink)'); })
+      .then(function(){ notifyBtn.disabled = false; notifyBtn.textContent = label; });
   });
 
   /* ---- starfield ---- */
-  const c = document.getElementById('stars');
-  const x = c.getContext('2d');
-  let stars = [];
-  function resize(){
-    c.width = innerWidth; c.height = innerHeight;
-    stars = Array.from({length: Math.min(160, Math.floor(innerWidth*innerHeight/9000))}, () => ({
-      x: Math.random()*c.width, y: Math.random()*c.height,
-      z: Math.random()*0.8+0.2, r: Math.random()*1.4+0.2
-    }));
+  var sc = document.getElementById('stars'), sx = sc.getContext('2d'), stars = [];
+  function resize(){ sc.width = innerWidth; sc.height = innerHeight;
+    stars = Array.from({length: Math.min(150, Math.floor(innerWidth*innerHeight/9000))}, function(){
+      return { x: Math.random()*sc.width, y: Math.random()*sc.height, z: Math.random()*0.8+0.2, r: Math.random()*1.3+0.2 }; });
   }
   function draw(){
-    x.clearRect(0,0,c.width,c.height);
-    for(const s of stars){
-      s.y += s.z*0.25;
-      if(s.y > c.height){ s.y = 0; s.x = Math.random()*c.width; }
-      x.globalAlpha = s.z;
-      x.fillStyle = s.z > 0.65 ? '#22e0ff' : '#e7ecff';
-      x.beginPath(); x.arc(s.x, s.y, s.r, 0, 6.28); x.fill();
-    }
+    sx.clearRect(0,0,sc.width,sc.height);
+    for(var i=0;i<stars.length;i++){ var s=stars[i]; s.y += s.z*0.22; if(s.y>sc.height){ s.y=0; s.x=Math.random()*sc.width; }
+      sx.globalAlpha = s.z; sx.fillStyle = s.z>0.65 ? '#22e0ff' : '#e7ecff'; sx.beginPath(); sx.arc(s.x,s.y,s.r,0,6.28); sx.fill(); }
     requestAnimationFrame(draw);
   }
-  addEventListener('resize', resize);
-  resize(); draw();
+  addEventListener('resize', resize); resize(); draw();
 
-  /* ---- pixel-art lemming sprite (20x26, side profile, facing right) ---- */
+  /* ---- pixel-art lemming ---- */
   (function(){
     var cv = document.getElementById('lemCanvas'); if(!cv) return;
     var g = cv.getContext('2d'); g.imageSmoothingEnabled = false;
-    var C = { G:'#00b300', B:'#5f63ff', S:'#ffebdf' };  // authentic Lemmings palette (no outline)
-    function px(x,y,c){ g.fillStyle=c; g.fillRect(x,y,1,1); }
-    // 4-frame walk cycle (11x10), transcribed pixel-for-pixel from the original sprite sheet
+    var C = { G:'#00b300', B:'#5f63ff', S:'#ffebdf' };
     var FR = [
       ["...GGG.....","..GGGGG....","..GGSSS....","S...SS...S.","SSSSBBSSSS.","....BB.....","....BB.....","...BBBB....","...B..B....","..SS..SS..."],
       ["....GG.....","..GGGGG....","..GGGSS....","S...SS...S.","SSSSBBSSSS.","....BB.....","....BB.....","...BBBB....","...B..B....","..SS..SS..."],
@@ -524,15 +706,12 @@
     function drawFrame(f){
       g.clearRect(0,0,cv.width,cv.height);
       var rows = FR[f % FR.length];
-      for(var y=0; y<rows.length; y++)
-        for(var x=0; x<rows[y].length; x++){
-          var ch=rows[y][x];
-          if(ch==='G') px(x,y,C.G); else if(ch==='B') px(x,y,C.B); else if(ch==='S') px(x,y,C.S);
-        }
+      for(var y=0;y<rows.length;y++) for(var x=0;x<rows[y].length;x++){
+        var ch=rows[y][x]; if(ch==='G') g.fillStyle=C.G; else if(ch==='B') g.fillStyle=C.B; else if(ch==='S') g.fillStyle=C.S; else continue;
+        g.fillRect(x,y,1,1);
+      }
     }
-
-    var f=0;
-    drawFrame(0);
+    var f=0; drawFrame(0);
     setInterval(function(){ f=(f+1)%4000; drawFrame(f); }, 130);
   })();
 </script>
